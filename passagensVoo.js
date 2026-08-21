@@ -1,112 +1,127 @@
 const { validate } = require("bycontract");
 
-class Passagem{
+class Passagem {
     #data;
     #numeroVoo;
     #custoBase;
 
-    constructor(data,numeroVoo,custoBase){
-        validate(arguments,["string","number","number"]);
+    constructor(data, numeroVoo, custoBase) {
+        validate(arguments, ["string", "number", "number"]);
         this.#data = data;
         this.#numeroVoo = numeroVoo;
         this.#custoBase = custoBase;
     }
-    get data(){
+
+    get data() {
         return this.#data;
     }
-    get numeroVoo(){
+    get numeroVoo() {
         return this.#numeroVoo;
     }
-    get custoBase(){
+    get custoBase() {
         return this.#custoBase;
     }
-    totalAPagar(){
+    totalAPagar() {
         return undefined;
     }
-    quantidadeMalas(){
+    quantidadeMalas() {
         return 0;
     }
-    acessoPrioritario(){
+    acessoPrioritario() {
         return false;
     }
-    toString(){         //informacoes basicas da passagem
+    toString() {
         let str = `\nData da Passagem: ${this.data}\nNumero do Voo: ${this.numeroVoo}\nValor: ${this.totalAPagar().toFixed(2)}`;
         str += `, malas: ${this.quantidadeMalas()}\nAcesso Prioritario: ${this.acessoPrioritario()}\n`;
         return str;
     }
 }
 
-class Economica extends Passagem{
-    constructor(data,numeroVoo,custoBase){
-        super(data,numeroVoo,custoBase);
+class Economica extends Passagem {
+    constructor(data, numeroVoo, custoBase) {
+        super(data, numeroVoo, custoBase);
     }
-    totalAPagar(){
+    totalAPagar() {
         return this.custoBase;
     }
-    toString(){     //detalhes da passagem economica
-        return 'Economica: '+super.toString();
+    toString() {
+        return "Economica: " + super.toString();
     }
 }
 
-class Executiva extends Passagem{
-    constructor(data,numeroVoo,custoBase){
-        super(data,numeroVoo,custoBase);
+class Executiva extends Passagem {
+    constructor(data, numeroVoo, custoBase) {
+        super(data, numeroVoo, custoBase);
     }
-    totalAPagar(){
-        let operacional = this.custoBase * 0.3;
-        return this.custoBase + operacional;
+    totalAPagar() {
+        return this.custoBase + this.custoBase * 0.3;
     }
-    quantidadeMalas(){
+    quantidadeMalas() {
         return 1;
     }
-    toString(){         //detalhes da passagem executiva
-        return 'Executiva: '+super.toString();
+    toString() {
+        return "Executiva: " + super.toString();
     }
 }
 
-class PrimeiraClasse extends Passagem{
-    constructor(data,numeroVoo,custoBase){
-        super(data,numeroVoo,custoBase);
+class PrimeiraClasse extends Passagem {
+    constructor(data, numeroVoo, custoBase) {
+        super(data, numeroVoo, custoBase);
     }
-    totalAPagar(){
-        let operacional = this.custoBase * 0.5;
-        return this.custoBase + operacional;
+
+    totalAPagar() {
+        return this.custoBase + this.custoBase * 0.5;
     }
-    quantidadeMalas(){
+    quantidadeMalas() {
         return 3;
     }
-    acessoPrioritario(){
+    acessoPrioritario() {
         return true;
     }
-    toString(){         //detalhes da passagem primeira classe
-        return 'Primeira Classe: '+super.toString();
+    toString() {
+        return "Primeira Classe: " + super.toString();
     }
 }
 
-function criarPassagem(data,numeroVoo,custoBase,tipo){
-    validate(arguments,["string","number","number","string"]);
-    let passagem = undefined; //variavel que vai receber a passagem criada
+function criarPassagem(data, numeroVoo, custoBase, tipo) {
+    validate(arguments, ["string", "number", "number", "string"]);
 
-    if(tipo === "economica"){
-        passagem = new Economica(data,numeroVoo,custoBase);
-        return passagem;
+    if (tipo === "economica") {
+        return new Economica(data, numeroVoo, custoBase);
     }
-    if(tipo === "executiva"){
-        passagem = new Executiva(data,numeroVoo,custoBase);
-        return passagem;
+    if (tipo === "executiva") {
+        return new Executiva(data, numeroVoo, custoBase);
     }
-    if(tipo === "primeiraClasse"){
-        passagem = new PrimeiraClasse(data,numeroVoo,custoBase);
-        return passagem;
+    if (tipo === "primeiraClasse") {
+        return new PrimeiraClasse(data, numeroVoo, custoBase);
     }
+    return undefined;
 }
 
-//criando passagens para teste
-let passagem1 = criarPassagem("01/01/2024",123,1000,"economica");
-let passagem2 = criarPassagem("01/01/2024",123,1000,"executiva");
-let passagem3 = criarPassagem("01/01/2024",123,1000,"primeiraClasse");
+function quantidadeMalasTotal(passagens) {
+    validate(arguments, ["Array"]);
 
-//imprimindo detalhes das passagens criadas
-console.log(passagem1.toString());
-console.log(passagem2.toString());
-console.log(passagem3.toString());
+    let contMalas = 0;
+    let contPrioritario = 0;
+
+    for (let p of passagens) {
+        contMalas += p.quantidadeMalas();
+        if (p.acessoPrioritario()) {
+            contPrioritario++;
+        }
+    }
+    return `\nQuantidade de malas: ${contMalas}\nQuantidade de passageiros com acesso prioritario: ${contPrioritario}\n`;
+}
+
+let passagens = [];
+
+passagens.push(new Economica("01/01/2024", 123, 1000));
+passagens.push(new Executiva("01/01/2024", 123, 1000));
+passagens.push(new PrimeiraClasse("01/01/2024", 123, 1000));
+
+for (let i = 0; i < passagens.length; i++) {
+    console.log(passagens[i].toString());
+}
+
+let resp = quantidadeMalasTotal(passagens);
+console.log(resp);
