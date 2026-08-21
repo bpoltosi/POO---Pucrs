@@ -1,4 +1,4 @@
-const { validate, typedef } = require("bycontract");
+import { validate, typedef } from "bycontract";
 
 typedef("#Transportavel", {
     fragil: "boolean",
