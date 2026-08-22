@@ -1,0 +1,8 @@
+codigo,descricao,preco unitario
+100,banana,5.0
+120,maca,3.9
+105,laranja,2.5
+218,morango,12.0
+165,pessego,8.90
+217,abacaxi,3.3
+98,uva,6.7
